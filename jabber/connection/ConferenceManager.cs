@@ -62,6 +62,13 @@ namespace jabber.connection
     /// <param name="participant">The participant in the room</param>
     public delegate void RoomParticipantEvent(Room room, RoomParticipant participant);
 
+	/// <summary>
+	/// An IQ-related callback.
+	/// </summary>
+	/// <param name="room">The room the event is for</param>
+	/// <param name="iq">The IQ received</param>
+	public delegate void RoomIQEvent(Room room, IQ iq);
+
     /// <summary>
     /// A participantCollection-related callback.
     /// </summary>
@@ -527,11 +534,17 @@ namespace jabber.connection
         [Category("Room")]
         public event RoomParticipantEvent OnParticipantLeave;
 
-        /// <summary>
-        /// A participant has changed presence, without joining or leaving the room.  This will not fire for yourself.
-        /// </summary>
-        [Category("Room")]
-        public event RoomParticipantEvent OnParticipantPresenceChange;
+		/// <summary>
+		/// A participant has changed presence, without joining or leaving the room.  This will not fire for yourself.
+		/// </summary>
+		[Category("Room")]
+		public event RoomParticipantEvent OnParticipantPresenceChange; 
+		
+		/// <summary>
+		/// Received an IQ from the room.
+		/// </summary>
+		[Category("Room")]
+		public event RoomIQEvent OnIQ;
 
         /// <summary>
         /// Determines whether to use the default conference room configuration
@@ -731,6 +744,9 @@ namespace jabber.connection
                 break;
             case "iq":
                 // TODO: IQs the room sends to us.
+				if (OnIQ != null)
+					OnIQ(this, (IQ)rp); 
+
                 break;
             }
         }
@@ -947,8 +963,8 @@ namespace jabber.connection
         /// <param name="body">The message text to send.</param>
         public void PublicMessage(string body)
         {
-            if (m_state != STATE.running)
-                throw new InvalidOperationException("Must be in running state to send message: " + m_state.ToString());
+            //if (m_state != STATE.running)
+                //throw new InvalidOperationException("Must be in running state to send message: " + m_state.ToString());
 /*
 <message
     to='darkcave@macbeth.shakespeare.lit'

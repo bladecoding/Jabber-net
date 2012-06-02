@@ -56,11 +56,13 @@ namespace jabber.protocol
     [SVN(@"$Id$")]
     public class EnumParser
 	{
-        private static Dictionary<Type, Dictionary<string, object>> s_vals = 
-            new Dictionary<Type, Dictionary<string, object>>();
+		[ThreadStatic]
+		static Dictionary<Type, Dictionary<string, object>> _s_vals_;
+		static Dictionary<Type, Dictionary<string, object>> s_vals { get { return _s_vals_ ?? (_s_vals_ = new Dictionary<Type, Dictionary<string, object>>()); } }
 
-        private static Dictionary<Type, Dictionary<object, string>> s_strings =
-            new Dictionary<Type, Dictionary<object, string>>();
+		[ThreadStatic]
+		static Dictionary<Type, Dictionary<object, string>> _s_strings;
+		static Dictionary<Type, Dictionary<object, string>> s_strings { get { return _s_strings ?? (_s_strings = new Dictionary<Type, Dictionary<object, string>>()); } }
 
         private static bool IsDash(Type t)
         {
