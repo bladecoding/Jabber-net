@@ -557,6 +557,16 @@ namespace jabber.connection
             set { m_default = value; }
         }
 
+		/// <summary>
+		/// True if you want to send an iq claiming ownership of a new room.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool OwnNewRooms
+		{
+			get;
+			set;
+		}
+
         /// <summary>
         /// The subject of the room.  Set has the side-effect of sending to the server.
         /// </summary>
@@ -773,7 +783,7 @@ namespace jabber.connection
                 return;
             }
 
-            if (x.HasStatus(RoomStatus.CREATED))
+            if (x.HasStatus(RoomStatus.CREATED) && OwnNewRooms)
             {
                 // room was created.  this must be me.
                 if (m_default || (OnRoomConfig == null))
@@ -1017,8 +1027,8 @@ namespace jabber.connection
         /// <param name="reason">The reason for the invite, or null for none.</param>
         public void Invite(JID invitee, string reason)
         {
-            if (m_state != STATE.running)
-                throw new InvalidOperationException("Must be in running state to send invite: " + m_state.ToString());
+            //if (m_state != STATE.running)
+                //throw new InvalidOperationException("Must be in running state to send invite: " + m_state.ToString());
 
             if (invitee == null)
                 throw new ArgumentNullException("invitee");
